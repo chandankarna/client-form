@@ -1,70 +1,115 @@
-# Getting Started with Create React App
+# Candidate Information Form
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Sure, here’s the updated instruction including the additional detail about updating only values in the database and creating new properties if they don’t exist:
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+### Candidate Information Form Project Overview
 
-### `npm start`
+The Candidate Information Form is a comprehensive tool designed to collect detailed information from candidates upon their joining. The form is segmented into five distinct tabs, each focusing on a specific category of information:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Employee Details Tab - [EmployeeDetailsTab] (First Form)
+2. Employment Details Tab -[EmploymentDetailsTab] (Second Form)
+3. Education Details Tab - [EducationDetailsTab] (Third Form)
+4. Tax Details Tab - [TaxDetailsTab] (Fourth Form)
+5. Additional Details Tab - [AdditionalDetailsTab] (Fifth Form)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Each tab includes various fields, summing up to approximately 100 inputs.
 
-### `npm test`
+## Data Storage:
+- Unique Identifier: Each candidate is uniquely identified by their PAN Card Number.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Collection Naming: Data for each candidate is stored in a collection named after the lowercase version of their PAN Card Number. For example, a PAN Card Number of ABCDE1234F results in a collection named abcde1234f in the CIF database.
 
-### `npm run build`
+# Storing Data:
+- The first form (Employee Details) creates a collection in the database with the PAN Card Number as its name.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Subsequent forms (Employment Details, Education Details, Tax Details, Additional Details) store their data as documents within this collection.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Each candidate's initial form submission creates the collection; subsequent forms update the existing collection with new documents or additional fields.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Collection Update:
 
-### `npm run eject`
+- If a candidate submits the form again with the same PAN Card Number, the existing collection is updated with the new data.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- If the new submission includes new parameters not previously recorded, these are added to the existing collection as additional objects.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Backend Implementation:
+- Framework: Express.js is used to handle form submissions and data management.
+- Function Files: Different function files are employed to manage data operations and interactions with the MongoDB database named `CIF`.
+- Data Handling: The backend server (`server.js`) processes form submissions by:
+  - Checking if a collection with the PAN Card Number already exists.
+  - Updating Existing Data: If the collection is present, it updates only the values of existing properties with the new data from the form submission. 
+  - Creating New Properties: If a property (e.g., `pOrganizationAddress`) does not exist in the collection, it will create this property and store the user-provided data in it.
+  - Adding/Modifying Fields: Properties that do not previously exist in the collection will be added, while existing properties will be updated with the latest information provided in the form.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Each form input is mapped to a specific property in the MongoDB collection. For instance, if the property `firstName` is filled out as "Chandan" and the PAN Card Number is "MIHPK6033S," the document in the collection `mipk6033s` will be updated with these details. If the `pOrganizationAddress` property is provided but does not exist in the database, it will be created and the form data will be saved in this new property.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The project uses React for the front-end and Material-UI (MUI) for the UI components. The form data will be managed in React and integrated with a mongoDB database.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Table of Contents
 
-### Code Splitting
+- [Setup](#setup)
+- [Project Structure](#project-structure)
+- [State Management](#state-management)
+- [Form Handling](#form-handling)
+- [Database Integration](#database-integration)
+- [Contributing](#contributing)
+- [License](#license)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Project Structure
 
-### Analyzing the Bundle Size
+cif/
+├── public/
+│   ├── index.html
+│   └── ...
+├── src/
+│   ├── components/
+│   │   ├── defaults/
+│   │   │   ├── Layout.js
+│   │   │   ├── Navs.js
+│   │   │   └── ...
+│   │   ├── tabs/
+│   │   │   ├── EmployeeDetailsTab.js
+│   │   │   ├── EmploymentDetailsTab.js
+│   │   │   ├── EducationDetailsTab.js
+│   │   │   ├── TaxInformationTab.js
+│   │   │   ├── AdditionalDetailsTab.js
+│   │   │   └── ...
+│   ├── utils/
+│   │   ├── formFunctions.js
+│   ├── pages/
+│   │   ├── HomeScreen.jsx
+│   │   └── ...
+│   ├── App.js
+│   ├── App.scss
+│   ├── index.js
+│   └── ...
+├── .gitignore
+├── README.md
+├── package.json
+└── ...
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+backend
+project-root/
+├── server/
+│   ├── controllers/
+│   │   ├── employeeController.js
+│   │   ├── educationController.js
+│   │   ├── employmentController.js
+│   │   ├── taxController.js
+│   │   └── additionalController.js
+│   ├── models/
+│   │   └── dynamicModel.js
+│   ├── routes/
+│   │   ├── employeeRoutes.js
+│   │   ├── educationRoutes.js
+│   │   ├── employmentRoutes.js
+│   │   ├── taxRoutes.js
+│   │   └── additionalRoutes.js
+│   └── server.js
+# client-form
